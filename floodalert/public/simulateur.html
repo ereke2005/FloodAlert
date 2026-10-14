@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulateur WhatsApp — FloodAlert Togo</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/simulateur.css">
+</head>
+<body>
+  <div id="entete"></div>
+  <main class="page etroite">
+    <h1>Simulateur de conversation WhatsApp</h1>
+    <p class="alerte info"><strong>Simulation.</strong> Cette page reproduit le dialogue du bot FloodAlert sans passer par WhatsApp. Les signalements créés ici sont marqués « Démo » et « Simulé ».</p>
+    <div id="indispo" class="alerte erreur hidden">Le simulateur est désactivé sur ce serveur.</div>
+
+    <section class="telephone" aria-label="Conversation simulée">
+      <div class="tel-tete">FloodAlert Togo <span>(simulation)</span></div>
+      <div id="fil" class="fil" aria-live="polite">
+        <div class="bulle bot">Bonjour ! Écrivez ce que vous voyez (exemple : « Beaucoup d'eau près du marché d'Adidogomé, les motos ne passent plus »).</div>
+      </div>
+      <form id="form" class="saisie">
+        <label class="sr-only" for="texte">Votre message</label>
+        <input type="text" id="texte" maxlength="1500" placeholder="Votre message" autocomplete="off">
+        <button class="btn" type="submit">Envoyer</button>
+      </form>
+      <div class="outils">
+        <button type="button" class="btn secondaire petit" id="btn-pos">Envoyer une position d'exemple</button>
+        <label class="btn secondaire petit">Envoyer une photo<input type="file" id="photo" accept="image/jpeg,image/png,image/webp" class="sr-only"></label>
+        <button type="button" class="btn secondaire petit" id="btn-nouveau">Nouvelle conversation</button>
+      </div>
+      <p class="aide">Position d'exemple : Adidogomé, Lomé. Tapez AIDE pour l'aide, ou STATUT FA-0001 pour suivre un signalement.</p>
+    </section>
+  </main>
+  <script src="js/common.js"></script>
+  <script src="js/simulateur.js"></script>
+</body>
+</html>

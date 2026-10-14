@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signaler une inondation — FloodAlert Togo</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/formulaire.css">
+</head>
+<body>
+  <div id="entete"></div>
+  <main class="page etroite">
+    <h1>Signaler une inondation</h1>
+    <p class="alerte erreur" id="urgence"></p>
+
+    <form id="form" class="panneau" novalidate>
+      <div id="erreur-globale" class="alerte erreur hidden" role="alert"></div>
+
+      <div class="champ" data-champ="type_incident">
+        <label for="type_incident">Que se passe-t-il ?</label>
+        <select id="type_incident" name="type_incident" required>
+          <option value="">Choisissez…</option>
+          <option value="inondation">Inondation</option>
+          <option value="route_bloquee">Route bloquée</option>
+          <option value="debordement">Débordement (caniveau, canal, lagune)</option>
+          <option value="batiment_menace">Bâtiment menacé</option>
+          <option value="autre">Autre</option>
+        </select>
+        <p class="erreur-champ"></p>
+      </div>
+
+      <div class="champ" data-champ="description">
+        <label for="description">Décrivez la situation</label>
+        <textarea id="description" name="description" maxlength="1500" required placeholder="Exemple : beaucoup d'eau près du marché, les motos ne passent plus."></textarea>
+        <p class="aide">Quelques mots suffisent : ce que vous voyez, la hauteur d'eau si vous la connaissez.</p>
+        <p class="erreur-champ"></p>
+      </div>
+
+      <fieldset class="champ lieu" data-champ="localisation">
+        <legend>Où ?</legend>
+        <button type="button" class="btn secondaire" id="btn-gps">Utiliser ma position</button>
+        <p class="aide" id="gps-etat" aria-live="polite">Ou touchez la carte à l'endroit exact, ou indiquez un repère ci-dessous.</p>
+        <div id="mini-carte" role="application" aria-label="Carte pour placer le signalement"></div>
+        <label for="lieu_declare">Quartier ou repère connu</label>
+        <input type="text" id="lieu_declare" name="lieu_declare" maxlength="160" placeholder="Exemple : marché d'Adidogomé">
+        <p class="erreur-champ"></p>
+      </fieldset>
+
+      <div class="champ" data-champ="date_observation">
+        <label for="date_observation">Quand l'avez-vous constaté ?</label>
+        <input type="datetime-local" id="date_observation" name="date_observation" required>
+        <p class="erreur-champ"></p>
+      </div>
+
+      <div class="champ" data-champ="photo">
+        <label for="photo">Photo (facultatif)</label>
+        <input type="file" id="photo" accept="image/jpeg,image/png,image/webp">
+        <p class="aide">JPEG, PNG ou WebP. Elle est réduite automatiquement et reste visible uniquement des vérificateurs.</p>
+        <img id="apercu" class="hidden" alt="Aperçu de la photo choisie">
+        <p class="erreur-champ"></p>
+      </div>
+
+      <div class="champ" data-champ="contact">
+        <label for="contact">Comment vous recontacter ? (facultatif)</label>
+        <input type="text" id="contact" name="contact" maxlength="120" placeholder="Numéro ou e-mail">
+        <p class="aide">Jamais affiché publiquement.</p>
+      </div>
+      <div class="champ hidden" id="bloc-consentement" data-champ="consentement">
+        <label class="case"><input type="checkbox" id="consentement"> J'accepte que les vérificateurs de FloodAlert me recontactent à propos de ce signalement si nécessaire.</label>
+        <p class="erreur-champ"></p>
+      </div>
+
+      <!-- Champ piège pour les robots : laissé vide par les humains -->
+      <div class="sr-only" aria-hidden="true"><label>Site web <input type="text" id="site_web" tabindex="-1" autocomplete="off"></label></div>
+
+      <button type="submit" class="btn" id="envoyer">Envoyer le signalement</button>
+    </form>
+
+    <section id="succes" class="panneau hidden" aria-live="polite">
+      <h2>Signalement reçu</h2>
+      <p class="reference" id="ref"></p>
+      <p>Il est <strong>en attente de vérification</strong>. Cette confirmation indique que votre message est arrivé, pas que l'incident est vérifié.</p>
+      <p id="note-carte"></p>
+      <p class="alerte erreur" id="urgence2"></p>
+      <p><a class="btn" href="index.html">Voir la carte</a> <a class="btn secondaire" href="signaler.html">Faire un autre signalement</a></p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/common.js"></script>
+  <script src="js/signaler.js"></script>
+</body>
+</html>

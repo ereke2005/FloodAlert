@@ -1,0 +1,7 @@
+fieldset.champ { border: 1.5px solid var(--ligne); border-radius: 8px; padding: .8rem; }
+fieldset.champ legend { font-weight: 700; padding: 0 .3rem; }
+#mini-carte { height: 260px; border-radius: 8px; border: 1.5px solid var(--ligne); margin: .6rem 0 1rem; }
+#apercu { max-width: 220px; border-radius: 8px; border: 1.5px solid var(--ligne); margin-top: .5rem; display: block; }
+.reference { font: 700 2rem var(--titres); color: var(--bouteille); letter-spacing: .03em; margin: .3rem 0; }
+#envoyer { width: 100%; font-size: 1.1rem; padding: .85rem; }
+.champ:not(.invalide) > .erreur-champ:empty, .erreur-champ:empty { display: none; }

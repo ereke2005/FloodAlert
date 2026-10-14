@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FloodAlert Togo — Carte des inondations signalées</title>
+  <meta name="description" content="Carte des inondations signalées par les habitants, avec statut de vérification.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/carte.css">
+</head>
+<body>
+  <div id="entete"></div>
+
+  <main class="carte-page">
+    <aside class="lateral" aria-label="Filtres et liste des signalements">
+      <div class="lateral-tete">
+        <h1>Inondations signalées</h1>
+        <p class="muted small" id="zone-nom"></p>
+        <a class="btn" href="signaler.html">Signaler une inondation</a>
+      </div>
+
+      <form class="filtres" id="filtres" aria-label="Filtres">
+        <fieldset>
+          <legend>Statut</legend>
+          <label class="case"><input type="checkbox" name="statut" value="a_verifier" checked> À vérifier</label>
+          <label class="case"><input type="checkbox" name="statut" value="confirme" checked> Confirmé</label>
+          <label class="case"><input type="checkbox" name="statut" value="resolu"> Résolu (historique)</label>
+        </fieldset>
+        <div class="deux">
+          <div class="champ">
+            <label for="f-type">Catégorie</label>
+            <select id="f-type"><option value="">Toutes</option></select>
+          </div>
+          <div class="champ">
+            <label for="f-periode">Période</label>
+            <select id="f-periode">
+              <option value="1">24 dernières heures</option>
+              <option value="3">3 derniers jours</option>
+              <option value="7" selected>7 derniers jours</option>
+              <option value="30">30 derniers jours</option>
+              <option value="0">Tout</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <div class="chiffres" id="chiffres" aria-live="polite"></div>
+      <ul class="liste" id="liste" aria-label="Signalements affichés"></ul>
+      <p class="muted small" id="non-localises"></p>
+
+      <div class="legende" aria-label="Légende">
+        <span><i class="pastille p-a_verifier"></i> À vérifier</span>
+        <span><i class="pastille p-confirme"></i> Confirmé</span>
+        <span><i class="pastille p-resolu"></i> Résolu</span>
+        <span><i class="pastille p-demo"></i> Donnée de démonstration</span>
+      </div>
+    </aside>
+
+    <section class="zone-carte" aria-label="Carte">
+      <div id="map" role="application" aria-label="Carte interactive des signalements"></div>
+      <article id="fiche" class="fiche hidden" aria-live="polite"></article>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/common.js"></script>
+  <script src="js/carte.js"></script>
+</body>
+</html>

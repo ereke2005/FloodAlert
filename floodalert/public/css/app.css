@@ -1,0 +1,92 @@
+/* FloodAlert Togo — styles communs
+   Palette : vert bouteille profond (eau de pluie sur feuillage), blanc brumeux,
+   et les trois couleurs du drapeau togolais réservées au sens des statuts. */
+:root {
+  --brume: #E9EFED;
+  --papier: #FFFFFF;
+  --encre: #10231F;
+  --encre-douce: #46605A;
+  --ligne: #CBD8D4;
+  --bouteille: #0C3B34;
+  --bouteille-2: #14524A;
+  --lagune: #1F7A74;
+  --jaune: #E3B100;
+  --rouge: #CE1126;
+  --vert: #006A4E;
+  --gris: #77807D;
+  --focus: #E3B100;
+  --corps: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --titres: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: 16px/1.5 var(--corps); color: var(--encre); background: var(--brume); }
+h1, h2, h3 { font-family: var(--titres); line-height: 1.2; margin: 0 0 .5rem; }
+h1 { font-size: 1.6rem; } h2 { font-size: 1.25rem; } h3 { font-size: 1.05rem; }
+a { color: var(--bouteille-2); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hidden { display: none !important; }
+.muted { color: var(--encre-douce); }
+.small { font-size: .875rem; }
+
+/* En-tête */
+.entete { background: var(--bouteille); color: #fff; border-bottom: 4px solid var(--jaune); position: relative; }
+.entete::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 4px;
+  background: linear-gradient(90deg, var(--vert) 0 33.3%, var(--jaune) 33.3% 66.6%, var(--rouge) 66.6%); }
+.entete-int { max-width: 1200px; margin: 0 auto; padding: .6rem 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.marque { display: flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; font: 700 1.2rem var(--titres); }
+.marque svg { width: 34px; height: 34px; flex: none; }
+.nav { display: flex; gap: .25rem; margin-left: auto; flex-wrap: wrap; }
+.nav a { color: #E8F1EE; text-decoration: none; padding: .45rem .8rem; border-radius: 6px; }
+.nav a:hover { background: var(--bouteille-2); }
+.nav a[aria-current="page"] { background: #fff; color: var(--bouteille); font-weight: 600; }
+
+.bandeau { background: #FFF4CC; color: #3E3200; border-bottom: 1px solid #E7D58A; font-size: .9rem; }
+.bandeau p { max-width: 1200px; margin: 0 auto; padding: .45rem 1rem; }
+
+/* Boutons et champs */
+.btn { font: 600 1rem var(--corps); padding: .65rem 1.1rem; border-radius: 6px; border: 2px solid var(--bouteille); background: var(--bouteille); color: #fff; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn:hover { background: var(--bouteille-2); border-color: var(--bouteille-2); }
+.btn.secondaire { background: #fff; color: var(--bouteille); }
+.btn.secondaire:hover { background: var(--brume); }
+.btn.danger { background: var(--rouge); border-color: var(--rouge); }
+.btn.succes { background: var(--vert); border-color: var(--vert); }
+.btn.petit { padding: .35rem .7rem; font-size: .9rem; }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+label { display: block; font-weight: 600; margin-bottom: .25rem; }
+input[type=text], input[type=email], input[type=password], input[type=datetime-local], input[type=date], input[type=search], input[type=number], select, textarea {
+  width: 100%; font: inherit; padding: .6rem .7rem; border: 1.5px solid #9DB1AB; border-radius: 4px; background: #fff; color: var(--encre);
+}
+textarea { min-height: 6.5rem; resize: vertical; }
+.champ { margin-bottom: 1rem; }
+.aide { font-size: .875rem; color: var(--encre-douce); margin: .25rem 0 0; }
+.erreur-champ { color: var(--rouge); font-size: .9rem; margin: .25rem 0 0; font-weight: 600; }
+.champ.invalide input, .champ.invalide select, .champ.invalide textarea { border-color: var(--rouge); }
+.case { display: flex; gap: .6rem; align-items: flex-start; font-weight: 400; }
+.case input { margin-top: .35rem; }
+
+/* Panneaux */
+.panneau { background: var(--papier); border: 1px solid var(--ligne); border-radius: 12px; padding: 1.1rem; }
+.page { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+.page.etroite { max-width: 720px; }
+
+/* Étiquettes de statut */
+.badge { display: inline-block; font-size: .8rem; font-weight: 700; padding: .12rem .55rem; border-radius: 999px; border: 1.5px solid currentColor; white-space: nowrap; }
+.st-a_verifier { color: #7A5D00; background: #FFF1BD; }
+.st-confirme { color: #8E0C1B; background: #FBDADE; }
+.st-resolu { color: #004B37; background: #D3EDE3; }
+.st-rejete { color: #4E5754; background: #E3E8E6; }
+.badge.demo { color: #3B4A67; background: #E4EAF6; border-style: dashed; }
+.badge.haute { color: #8E0C1B; background: #FBDADE; }
+
+/* Alertes */
+.alerte { border-radius: 8px; padding: .8rem 1rem; border: 1.5px solid; margin: 0 0 1rem; }
+.alerte.erreur { color: #7A0A18; background: #FBDADE; border-color: var(--rouge); }
+.alerte.ok { color: #00402F; background: #D3EDE3; border-color: var(--vert); }
+.alerte.info { color: #17403B; background: #DCEDEA; border-color: var(--lagune); }
+
+.toast { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); background: var(--bouteille); color: #fff; padding: .7rem 1.2rem; border-radius: 8px; z-index: 5000; max-width: 90vw; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

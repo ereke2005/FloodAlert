@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace vérificateur — FloodAlert Togo</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="entete"></div>
+
+  <main class="page" id="vue-login">
+    <section class="panneau connexion">
+      <h1>Espace vérificateur</h1>
+      <p class="muted">Réservé aux personnes autorisées.</p>
+      <div id="login-erreur" class="alerte erreur hidden" role="alert"></div>
+      <form id="form-login" novalidate>
+        <div class="champ"><label for="email">Adresse e-mail</label><input type="email" id="email" autocomplete="username" required></div>
+        <div class="champ"><label for="mdp">Mot de passe</label><input type="password" id="mdp" autocomplete="current-password" required></div>
+        <button class="btn" type="submit">Se connecter</button>
+      </form>
+    </section>
+  </main>
+
+  <main class="page hidden" id="vue-app">
+    <div class="barre">
+      <div><h1>Tableau de bord</h1><p class="muted small" id="qui"></p></div>
+      <div class="barre-actions">
+        <a class="btn secondaire petit" id="export" href="/api/admin/export.csv">Exporter en CSV</a>
+        <button class="btn secondaire petit" id="deconnexion" type="button">Se déconnecter</button>
+      </div>
+    </div>
+
+    <section aria-label="Indicateurs" class="cartes" id="cartes"></section>
+
+    <section class="graphes">
+      <div class="panneau"><h3>Signalements reçus par jour (14 jours)</h3><div class="barres" id="g-jours" role="img" aria-label="Histogramme des signalements par jour"></div></div>
+      <div class="panneau"><h3>Par catégorie</h3><div id="g-types"></div><h3 class="espace">Par canal</h3><div id="g-sources"></div></div>
+    </section>
+
+    <form class="panneau filtres-adm" id="filtres" aria-label="Filtres">
+      <div class="champ"><label for="f-q">Recherche</label><input type="search" id="f-q" placeholder="Référence, lieu, texte"></div>
+      <div class="champ"><label for="f-statut">Statut</label><select id="f-statut"><option value="tous">Tous</option><option value="a_verifier">À vérifier</option><option value="confirme">Confirmé</option><option value="resolu">Résolu</option><option value="rejete">Rejeté</option></select></div>
+      <div class="champ"><label for="f-source">Canal</label><select id="f-source"><option value="tous">Tous</option><option value="web">Formulaire web</option><option value="whatsapp">WhatsApp</option></select></div>
+      <div class="champ"><label for="f-type">Catégorie</label><select id="f-type"><option value="tous">Toutes</option><option value="inondation">Inondation</option><option value="route_bloquee">Route bloquée</option><option value="debordement">Débordement</option><option value="batiment_menace">Bâtiment menacé</option><option value="autre">Autre</option></select></div>
+      <div class="champ"><label for="f-localise">Position</label><select id="f-localise"><option value="">Toutes</option><option value="1">Avec position</option><option value="0">Sans position</option></select></div>
+      <div class="champ"><label for="f-demo">Données</label><select id="f-demo"><option value="">Toutes</option><option value="0">Terrain uniquement</option><option value="1">Démonstration uniquement</option></select></div>
+      <div class="champ"><label for="f-from">Du</label><input type="date" id="f-from"></div>
+      <div class="champ"><label for="f-to">Au</label><input type="date" id="f-to"></div>
+      <div class="champ bouton"><button class="btn secondaire" type="button" id="reset">Réinitialiser</button></div>
+    </form>
+
+    <section class="panneau" aria-label="Liste des signalements">
+      <h2 id="titre-liste">Signalements</h2>
+      <div class="tableau-conteneur">
+        <table class="tableau">
+          <thead><tr><th>Référence</th><th>Observé</th><th>Catégorie</th><th>Lieu</th><th>Canal</th><th>Statut</th><th>Position</th></tr></thead>
+          <tbody id="corps"></tbody>
+        </table>
+      </div>
+      <p class="muted small" id="pied-liste"></p>
+    </section>
+  </main>
+
+  <div id="voile" class="voile hidden"></div>
+  <aside id="detail" class="detail hidden" aria-label="Fiche du signalement"></aside>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

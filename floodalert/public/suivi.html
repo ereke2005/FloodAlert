@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suivre un signalement — FloodAlert Togo</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="entete"></div>
+  <main class="page etroite">
+    <h1>Suivre un signalement</h1>
+    <form id="form" class="panneau" novalidate>
+      <div class="champ">
+        <label for="ref">Référence reçue (exemple : FA-0001)</label>
+        <input type="text" id="ref" maxlength="12" autocomplete="off" placeholder="FA-0001">
+      </div>
+      <button type="submit" class="btn">Voir le statut</button>
+    </form>
+    <div id="resultat" class="panneau hidden" aria-live="polite"></div>
+  </main>
+  <script src="js/common.js"></script>
+  <script src="js/suivi.js"></script>
+</body>
+</html>
