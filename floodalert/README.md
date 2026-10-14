@@ -4,6 +4,12 @@ Plateforme de signalement et de suivi des inondations : WhatsApp et formulaire w
 
 Prototype fonctionnel du cahier des charges « FloodAlert Togo v1.0 ». Aucune dépendance à installer, aucun abonnement, aucun paiement.
 
+## Nouveautés v1.1
+
+- **Détection avancée des doublons** : Algorithmes sophistiqués (similarité cosinus, Levenshtein, clustering spatio-temporel) pour identifier les signalements en double avec précision
+- **Prévision des risques** : Analyse des données historiques pour prédire les risques d'inondation sur 7 jours et générer des recommandations
+- **Interface d'analyse avancée** : Nouveau panneau dans l'espace administrateur pour visualiser les doublons et les prévisions de risque
+
 ## Démarrage en 2 minutes
 
 Il faut seulement [Node.js](https://nodejs.org) version 20 ou plus récente.
@@ -73,10 +79,51 @@ Mots de passe hachés (scrypt), session en cookie signé `HttpOnly` et `SameSite
 ```
 server.js            serveur HTTP et routes
 lib/                 config, stockage, authentification, IA, signalements, WhatsApp
+                     duplicates.js (détection avancée des doublons)
+                     forecasting.js (prévision des risques)
 public/              pages, styles, scripts du navigateur
 scripts/             création d'admin, données de démo, tests
 docs/                documentation complète et rapport de tests
 data/                base et photos (créé automatiquement, à sauvegarder)
 ```
+
+## Fonctionnalités avancées
+
+### Détection des doublons
+
+Le système utilise plusieurs algorithmes pour identifier les signalements en double :
+- **Similarité cosinus** : Analyse vectorielle des descriptions textuelles
+- **Distance de Levenshtein** : Mesure de similarité entre les lieux déclarés
+- **Clustering spatio-temporel** : Regroupement des incidents proches dans le temps et l'espace
+- **Score composite** : Combinaison pondérée de tous les critères (distance, type, temps, description)
+
+Les doublons détectés sont affichés dans l'onglet "Détection des doublons" de l'espace administrateur, avec des suggestions de fusion automatique basées sur la qualité des données (photo, GPS, confiance IA).
+
+### Prévision des risques
+
+Le module de prévision analyse les données historiques pour :
+- Calculer un score de risque actuel (0-100%) basé sur la fréquence, la gravité, la récence et le clustering
+- Générer des prévisions sur 7 jours avec un niveau de confiance
+- Identifier les hotspots géographiques (zones à forte concentration d'incidents)
+- Analyser les tendances temporelles (heures, jours de la semaine)
+- Générer des recommandations d'action basées sur le niveau de risque
+
+Les prévisions sont accessibles dans l'onglet "Prévision des risques" de l'espace administrateur.
+
+## API d'analyse avancée
+
+### Doublons
+- `GET /api/admin/doublons/stats` - Statistiques globales sur les doublons
+- `GET /api/admin/doublons/groupes` - Liste des groupes de doublons détectés
+- `GET /api/admin/doublons/clusters` - Clusters spatio-temporels
+- `GET /api/admin/doublons/:ref/suggestion` - Suggestion de fusion pour un signalement
+
+### Risques
+- `GET /api/admin/risques/rapport` - Rapport complet d'analyse de risque
+- `GET /api/admin/risques/actuel` - Score de risque actuel
+- `GET /api/admin/risques/previsions?days=7` - Prévisions sur N jours
+- `GET /api/admin/risques/tendances?days=30` - Analyse des tendances
+- `GET /api/admin/risques/spatial` - Distribution spatiale des incidents
+- `GET /api/admin/risques/recommandations` - Recommandations basées sur le risque
 
 Voir `docs/DOCUMENTATION.md` pour la documentation technique, le guide d'utilisation et les limites connues.

@@ -78,6 +78,16 @@
       <button type="submit" class="btn" id="envoyer">Envoyer le signalement</button>
     </form>
 
+    <!-- Avertissement de doublons -->
+    <section id="avertissement-doublons" class="panneau hidden" aria-live="polite">
+      <h2>⚠️ Doublons potentiels détectés</h2>
+      <p>Ce signalement ressemble à des signalements existants. Veuillez vérifier s'il s'agit du même incident.</p>
+      <div id="liste-doublons"></div>
+      <p class="aide">Si après vérification vous confirmez que ce n'est pas un doublon, vous pouvez forcer l'envoi ci-dessous.</p>
+      <button type="button" class="btn" id="confirmer-pas-doublon">Confirmer et envoyer malgré tout</button>
+      <button type="button" class="btn secondaire" id="modifier-signalement">Modifier mon signalement</button>
+    </section>
+
     <section id="succes" class="panneau hidden" aria-live="polite">
       <h2>Signalement reçu</h2>
       <p class="reference" id="ref"></p>

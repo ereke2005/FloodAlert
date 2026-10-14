@@ -280,6 +280,117 @@
     catch (e) { b.disabled = false; b.textContent = 'Relancer l\'analyse'; toast(e.message); }
   }
 
+  /* ───────────── Analyse avancée : Onglets ───────────── */
+
+  document.querySelectorAll('.onglet').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.onglet').forEach(o => o.classList.remove('actif'));
+      btn.classList.add('actif');
+      document.querySelectorAll('.contenu-onglet').forEach(c => c.classList.add('hidden'));
+      const onglet = btn.dataset.onglet;
+      $('#onglet-' + onglet).classList.remove('hidden');
+      if (onglet === 'doublons') loadDoublons();
+      if (onglet === 'risques') loadRisques();
+    });
+  });
+
+  /* ───────────── Détection des doublons ───────────── */
+
+  async function loadDoublons() {
+    try {
+      const [stats, groupes] = await Promise.all([
+        api('/api/admin/doublons/stats'),
+        api('/api/admin/doublons/groupes'),
+      ]);
+      renderDoublonsStats(stats);
+      renderDoublonsGroupes(groupes.groupes);
+    } catch (e) {
+      $('#stats-doublons').innerHTML = '<p class="stat-vide">Erreur de chargement : ' + esc(e.message) + '</p>';
+    }
+  }
+
+  function renderDoublonsStats(stats) {
+    $('#stats-doublons').innerHTML =
+      '<div class="stat-doublon"><b>' + stats.totalSignalements + '</b><span>Total signalements</span></div>' +
+      '<div class="stat-doublon"><b>' + stats.withPotentialDuplicates + '</b><span>Avec doublons</span></div>' +
+      '<div class="stat-doublon"><b>' + stats.duplicateGroups + '</b><span>Groupes détectés</span></div>' +
+      '<div class="stat-doublon"><b>' + stats.duplicateRate + '%</b><span>Taux de doublons</span></div>';
+  }
+
+  function renderDoublonsGroupes(groupes) {
+    if (!groupes || groupes.length === 0) {
+      $('#groupes-doublons').innerHTML = '<p class="stat-vide">Aucun groupe de doublons détecté</p>';
+      return;
+    }
+    $('#groupes-doublons').innerHTML = groupes.map(g => {
+      const refs = g.duplicates.map(d => '<span class="ref">' + esc(d) + '</span>').join('');
+      return '<div class="groupe-doublons">' +
+        '<h4>Groupe de ' + g.count + ' signalements</h4>' +
+        '<div class="refs"><span class="ref principal">' + esc(g.primary) + '</span>' + refs + '</div>' +
+        '<div class="score">Scores : ' + g.scores.map(s => s.reference + ' (' + s.score + ')').join(', ') + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ───────────── Prévision des risques ───────────── */
+
+  async function loadRisques() {
+    try {
+      const [actuel, previsions, recommandations] = await Promise.all([
+        api('/api/admin/risques/actuel'),
+        api('/api/admin/risques/previsions'),
+        api('/api/admin/risques/recommandations'),
+      ]);
+      renderRisqueActuel(actuel);
+      renderPrevisions(previsions.forecast);
+      renderRecommandations(recommandations);
+    } catch (e) {
+      $('#indicateur-risque').innerHTML = '<p class="stat-vide">Erreur de chargement : ' + esc(e.message) + '</p>';
+    }
+  }
+
+  function renderRisqueActuel(risk) {
+    const niveau = risk.level;
+    $('#indicateur-risque').className = 'indicateur-risque ' + niveau;
+    $('#indicateur-risque').innerHTML =
+      '<div class="score">' + Math.round(risk.score * 100) + '%</div>' +
+      '<div class="label">' + esc(niveau.charAt(0).toUpperCase() + niveau.slice(1)) + '</div>' +
+      '<div class="details">Fréquence: ' + Math.round(risk.components.frequency * 100) + '% | ' +
+      'Gravité: ' + Math.round(risk.components.severity * 100) + '% | ' +
+      'Récence: ' + Math.round(risk.components.recency * 100) + '%</div>';
+  }
+
+  function renderPrevisions(forecast) {
+    if (!forecast || forecast.length === 0) {
+      $('#previsions-risques').innerHTML = '<p class="stat-vide">Aucune prévision disponible</p>';
+      return;
+    }
+    $('#previsions-risques').innerHTML = forecast.map(f => {
+      const date = new Date(f.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      const niveau = f.level;
+      return '<div class="prevision-jour ' + niveau + '">' +
+        '<span class="date">' + esc(date) + '</span>' +
+        '<span class="niveau">' + esc(niveau.charAt(0).toUpperCase() + niveau.slice(1)) + '</span>' +
+        '<div class="barre"><div class="barre-fill" style="width: ' + (f.score * 100) + '%"></div></div>' +
+        '<span class="confiance">' + Math.round(f.confidence * 100) + '% conf.</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderRecommandations(recs) {
+    if (!recs || recs.length === 0) {
+      $('#recommandations-risques').innerHTML = '<p class="stat-vide">Aucune recommandation pour le moment</p>';
+      return;
+    }
+    $('#recommandations-risques').innerHTML = recs.map(r => {
+      return '<div class="recommandation ' + r.priority + '">' +
+        '<h4>' + esc(r.priority.charAt(0).toUpperCase() + r.priority.slice(1)) + '</h4>' +
+        '<span class="type">' + esc(r.type) + '</span>' +
+        '<div class="action">' + esc(r.action) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
   boot();
   setInterval(() => { if (!$('#vue-app').classList.contains('hidden') && $('#detail').classList.contains('hidden')) load(); }, 45000);
 })();

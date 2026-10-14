@@ -5,6 +5,7 @@ const { randomUUID } = require('crypto');
 const cfg = require('./config');
 const store = require('./store');
 const ai = require('./ai');
+const dup = require('./duplicates');
 const { clip, norm, haversine, jaccard, redact } = require('./util');
 
 const TYPES = ['inondation', 'route_bloquee', 'debordement', 'batiment_menace', 'autre'];
@@ -98,28 +99,23 @@ function proposePriority(type, text, analyse) {
   return 'normale';
 }
 
-/** Cherche des déclarations proches (jamais de suppression, simple signalement : F07, RB-05). */
+/** Cherche des déclarations proches avec l'algorithme avancé (jamais de suppression, simple signalement : F07, RB-05). */
 function findDuplicates(s) {
-  const out = [];
-  for (const o of store.db.signalements) {
-    if (o.id === s.id || o.statut === 'rejete') continue;
-    const dt = Math.abs(new Date(o.date_observation) - new Date(s.date_observation));
-    if (dt > 24 * 3600000) continue;
-    let score = 0;
-    const raisons = [];
-    if (o.latitude != null && s.latitude != null) {
-      const d = haversine(o.latitude, o.longitude, s.latitude, s.longitude);
-      if (d <= 300) { score += 0.5; raisons.push('à ' + Math.round(d) + ' m'); }
-    } else if (o.lieu_declare && s.lieu_declare && norm(o.lieu_declare) === norm(s.lieu_declare)) {
-      score += 0.4; raisons.push('même lieu déclaré');
-    }
-    if (o.type_incident === s.type_incident) { score += 0.15; raisons.push('même type'); }
-    if (dt <= 6 * 3600000) { score += 0.1; raisons.push('même plage horaire'); }
-    const j = jaccard(o.description_originale, s.description_originale);
-    if (j >= 0.4) { score += 0.25; raisons.push('description proche'); }
-    if (score >= 0.6) out.push({ reference: o.reference, score: Math.round(score * 100) / 100, raisons });
-  }
-  return out.sort((a, b) => b.score - a.score).slice(0, 5);
+  return dup.findAdvancedDuplicates(s, store.db.signalements);
+}
+
+/** Vérifie les doublons potentiels avant création (pour prévenir l'utilisateur) */
+function checkDuplicatesBeforeCreate(input) {
+  const tempSignalement = {
+    id: 'temp-' + Date.now(),
+    type_incident: input.type_incident || 'autre',
+    description_originale: input.description || '',
+    latitude: input.lat ? Number(input.lat) : null,
+    longitude: input.lng ? Number(input.lng) : null,
+    lieu_declare: input.lieu_declare || null,
+    date_observation: input.date_observation || new Date().toISOString(),
+  };
+  return findDuplicates(tempSignalement);
 }
 
 /**
@@ -344,5 +340,5 @@ function getByRef(ref) { return store.db.signalements.find((x) => x.reference ==
 module.exports = {
   TYPES, STATUTS, SOURCES, ValidationError,
   create, runAnalysis, update, publicView, adminView, applyFilters, stats,
-  getById, getByRef, savePhotoBuffer, coordsValid,
+  getById, getByRef, savePhotoBuffer, coordsValid, findDuplicates, checkDuplicatesBeforeCreate,
 };

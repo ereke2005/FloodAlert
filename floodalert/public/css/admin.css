@@ -43,4 +43,58 @@
 .histo time { color: var(--encre-douce); font-size: .8rem; display: block; }
 .doublon { display: flex; justify-content: space-between; gap: .5rem; align-items: center; border: 1.5px dashed #B58E00; background: #FFF9DD; border-radius: 8px; padding: .4rem .6rem; margin: .3rem 0; font-size: .9rem; }
 .stat-vide { color: var(--encre-douce); padding: .5rem 0; }
+
+/* Analyse avancée */
+.onglets { display: flex; gap: .5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--ligne); padding-bottom: .5rem; }
+.onglet { background: none; border: none; padding: .5rem 1rem; font: 600 1rem var(--corps); color: var(--encre-douce); cursor: pointer; border-radius: 6px 6px 0 0; }
+.onglet:hover { background: var(--brume); }
+.onglet.actif { background: var(--bouteille-2); color: #fff; }
+.contenu-onglet { padding: .5rem 0; }
+.contenu-onglet.hidden { display: none; }
+
+/* Stats doublons */
+.stats-doublons { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .5rem; margin-bottom: 1rem; }
+.stat-doublon { background: #FFF9DD; border: 1px solid #B58E00; border-radius: 8px; padding: .6rem; text-align: center; }
+.stat-doublon b { display: block; font: 700 1.6rem var(--titres); color: #5E4800; }
+.stat-doublon span { font-size: .85rem; color: #5E4800; }
+
+/* Groupes de doublons */
+.groupe-doublons { background: var(--brume); border: 1px solid var(--ligne); border-radius: 8px; padding: .6rem; margin: .5rem 0; }
+.groupe-doublons h4 { margin: 0 0 .4rem; font-size: .95rem; }
+.groupe-doublons .refs { display: flex; gap: .3rem; flex-wrap: wrap; margin-bottom: .4rem; }
+.groupe-doublons .ref { background: #fff; border: 1px solid var(--ligne); border-radius: 4px; padding: .2rem .5rem; font-size: .85rem; }
+.groupe-doublons .ref.principal { border-color: var(--rouge); font-weight: 700; }
+.groupe-doublons .score { font-size: .85rem; color: var(--encre-douce); }
+
+/* Indicateur de risque */
+.indicateur-risque { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.indicateur-risque.négligeable { background: #E8F5E9; border: 2px solid #4CAF50; }
+.indicateur-risque.faible { background: #FFF3E0; border: 2px solid #FF9800; }
+.indicateur-risque.moyen { background: #FFF9C4; border: 2px solid #FFC107; }
+.indicateur-risque.élevé { background: #FFEBEE; border: 2px solid #F44336; }
+.indicateur-risque.critique { background: #FFCDD2; border: 2px solid #D32F2F; }
+.indicateur-risque .score { font: 700 2.5rem var(--titres); }
+.indicateur-risque .label { font: 700 1.2rem var(--titres); }
+.indicateur-risque .details { font-size: .9rem; color: var(--encre-douce); }
+
+/* Prévisions */
+.prevision-jour { display: flex; align-items: center; gap: .5rem; padding: .4rem .6rem; border-radius: 6px; margin: .3rem 0; }
+.prevision-jour.faible { background: #E8F5E9; }
+.prevision-jour.moyen { background: #FFF3E0; }
+.prevision-jour.élevé { background: #FFEBEE; }
+.prevision-jour.critique { background: #FFCDD2; }
+.prevision-jour .date { flex: 0 0 100px; font-weight: 600; }
+.prevision-jour .niveau { flex: 0 0 80px; font-weight: 700; }
+.prevision-jour .barre { flex: 1; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden; }
+.prevision-jour .barre-fill { height: 100%; background: var(--bouteille-2); transition: width 0.3s; }
+.prevision-jour .confiance { flex: 0 0 60px; font-size: .8rem; color: var(--encre-douce); }
+
+/* Recommandations */
+.recommandation { background: #E3F2FD; border-left: 4px solid var(--bouteille-2); border-radius: 4px; padding: .6rem; margin: .4rem 0; }
+.recommandation.urgent { background: #FFEBEE; border-left-color: #F44336; }
+.recommandation.high { background: #FFF3E0; border-left-color: #FF9800; }
+.recommandation h4 { margin: 0 0 .3rem; font-size: .95rem; }
+.recommandation .type { font-size: .8rem; color: var(--encre-douce); text-transform: uppercase; }
+.recommandation .action { font-size: .9rem; margin-top: .2rem; }
+
 @media (max-width: 820px) { .graphes { grid-template-columns: 1fr; } }

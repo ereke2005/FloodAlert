@@ -7,6 +7,8 @@ const cfg = require('./lib/config');
 const store = require('./lib/store');
 const auth = require('./lib/auth');
 const sig = require('./lib/signalements');
+const dup = require('./lib/duplicates');
+const forecast = require('./lib/forecasting');
 const wa = require('./lib/whatsapp');
 const { rateLimit, clip } = require('./lib/util');
 
@@ -115,6 +117,22 @@ route('POST', '/api/signalements', async (c) => {
   if (!rateLimit('post:' + c.ip, 20, 3600000)) return c.json({ error: 'Trop de signalements depuis cette connexion. Réessayez plus tard.' }, 429);
   const b = c.body || {};
   if (b.site_web) return c.json({ ok: true, reference: 'FA-0000' }); // champ piège pour les robots : on fait semblant
+  
+  // Vérifier les doublons potentiels avant création (sauf si forcé)
+  if (!b.confirmer_pas_doublon) {
+    const doublonsPotentiels = sig.checkDuplicatesBeforeCreate({
+      type_incident: b.type_incident, description: b.description, lat: b.lat, lng: b.lng,
+      lieu_declare: b.lieu_declare, date_observation: b.date_observation,
+    });
+    if (doublonsPotentiels.length > 0) {
+      return c.json({ 
+        error: 'Doublons potentiels détectés', 
+        doublons: doublonsPotentiels,
+        message: 'Ce signalement ressemble à des signalements existants. Veuillez vérifier s\'il s\'agit du même incident avant de confirmer.'
+      }, 409);
+    }
+  }
+  
   try {
     const s = await sig.create({
       type_incident: b.type_incident, description: b.description, lat: b.lat, lng: b.lng,
@@ -249,6 +267,65 @@ route('GET', '/api/admin/export.csv', (c) => {
 }, { auth: true, raw: true });
 
 route('GET', '/api/admin/erreurs', (c) => c.json({ erreurs: store.db.erreurs.slice(-100).reverse() }), admin);
+
+/* ───────────── Détection avancée des doublons ───────────── */
+
+route('GET', '/api/admin/doublons/stats', (c) => {
+  c.json(dup.duplicateStats(store.db.signalements));
+}, admin);
+
+route('GET', '/api/admin/doublons/groupes', (c) => {
+  const groupes = dup.detectAllDuplicates(store.db.signalements);
+  c.json({ groupes, total: groupes.length });
+}, admin);
+
+route('GET', '/api/admin/doublons/clusters', (c) => {
+  const clusters = dup.clusterIncidents(store.db.signalements);
+  c.json({ clusters, total: clusters.length });
+}, admin);
+
+route('GET', '/api/admin/doublons/:ref/suggestion', (c) => {
+  const s = sig.getByRef(c.params.ref);
+  if (!s) return c.json({ error: 'Signalement introuvable.' }, 404);
+  const duplicates = s.doublons || [];
+  const suggestion = dup.suggestAction(s.reference, duplicates.map(d => d.reference), store.db.signalements);
+  c.json(suggestion);
+}, admin);
+
+/* ───────────── Prévision des risques ───────────── */
+
+route('GET', '/api/admin/risques/rapport', (c) => {
+  const rapport = forecast.generateRiskReport(store.db.signalements);
+  c.json(rapport);
+}, admin);
+
+route('GET', '/api/admin/risques/actuel', (c) => {
+  const riskScore = forecast.calculateRiskScore(store.db.signalements);
+  c.json(riskScore);
+}, admin);
+
+route('GET', '/api/admin/risques/previsions', (c) => {
+  const days = parseInt(c.query.days) || 7;
+  const forecastData = forecast.generateForecast(store.db.signalements, days);
+  c.json(forecastData);
+}, admin);
+
+route('GET', '/api/admin/risques/tendances', (c) => {
+  const days = parseInt(c.query.days) || 30;
+  const trends = forecast.analyzeTrends(store.db.signalements, days);
+  c.json(trends);
+}, admin);
+
+route('GET', '/api/admin/risques/spatial', (c) => {
+  const spatial = forecast.analyzeSpatialDistribution(store.db.signalements);
+  c.json(spatial);
+}, admin);
+
+route('GET', '/api/admin/risques/recommandations', (c) => {
+  const riskScore = forecast.calculateRiskScore(store.db.signalements);
+  const recommendations = forecast.generateRecommendations(riskScore);
+  c.json(recommendations);
+}, admin);
 
 /* ───────────── Fichiers statiques ───────────── */
 

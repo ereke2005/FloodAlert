@@ -42,6 +42,28 @@
       <div class="panneau"><h3>Par catégorie</h3><div id="g-types"></div><h3 class="espace">Par canal</h3><div id="g-sources"></div></div>
     </section>
 
+    <section class="panneau" aria-label="Analyse avancée">
+      <h2>Analyse avancée</h2>
+      <div class="onglets">
+        <button class="onglet actif" data-onglet="doublons">Détection des doublons</button>
+        <button class="onglet" data-onglet="risques">Prévision des risques</button>
+      </div>
+      
+      <div id="onglet-doublons" class="contenu-onglet">
+        <div class="stats-doublons" id="stats-doublons"></div>
+        <h3>Groupes de doublons détectés</h3>
+        <div id="groupes-doublons"></div>
+      </div>
+      
+      <div id="onglet-risques" class="contenu-onglet hidden">
+        <div class="indicateur-risque" id="indicateur-risque"></div>
+        <h3>Prévisions à 7 jours</h3>
+        <div id="previsions-risques"></div>
+        <h3>Recommandations</h3>
+        <div id="recommandations-risques"></div>
+      </div>
+    </section>
+
     <form class="panneau filtres-adm" id="filtres" aria-label="Filtres">
       <div class="champ"><label for="f-q">Recherche</label><input type="search" id="f-q" placeholder="Référence, lieu, texte"></div>
       <div class="champ"><label for="f-statut">Statut</label><select id="f-statut"><option value="tous">Tous</option><option value="a_verifier">À vérifier</option><option value="confirme">Confirmé</option><option value="resolu">Résolu</option><option value="rejete">Rejeté</option></select></div>

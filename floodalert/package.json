@@ -1,7 +1,7 @@
 {
   "name": "floodalert-togo",
-  "version": "1.0.0",
-  "description": "FloodAlert Togo : plateforme de signalement et de suivi des inondations (prototype)",
+  "version": "1.1.0",
+  "description": "FloodAlert Togo : plateforme de signalement et de suivi des inondations avec détection avancée des doublons et prévision des risques",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -5,3 +5,11 @@ fieldset.champ legend { font-weight: 700; padding: 0 .3rem; }
 .reference { font: 700 2rem var(--titres); color: var(--bouteille); letter-spacing: .03em; margin: .3rem 0; }
 #envoyer { width: 100%; font-size: 1.1rem; padding: .85rem; }
 .champ:not(.invalide) > .erreur-champ:empty, .erreur-champ:empty { display: none; }
+
+#avertissement-doublons { background: #FFF9DD; border: 2px solid #B58E00; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+#avertissement-doublons h2 { color: #5E4800; margin-top: 0; }
+.doublon-item { background: #fff; border: 1px solid var(--ligne); border-radius: 6px; padding: .6rem; margin: .4rem 0; }
+.doublon-item a { color: var(--bouteille-2); text-decoration: none; font-weight: 700; }
+.doublon-item a:hover { text-decoration: underline; }
+.doublon-raisons { color: var(--encre-douce); font-size: .9rem; }
+#avertissement-doublons button { margin-right: .5rem; margin-top: .5rem; }

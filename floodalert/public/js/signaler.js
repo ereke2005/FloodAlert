@@ -96,6 +96,7 @@
       consentement: $('#consentement').checked,
       photo: photoData,
       site_web: $('#site_web').value,
+      confirmer_pas_doublon: false,
     };
     // Contrôles rapides côté navigateur (le serveur revérifie tout)
     let bad = false;
@@ -118,6 +119,25 @@
       $('#succes').scrollIntoView();
     } catch (e) {
       btn.disabled = false; btn.textContent = 'Envoyer le signalement';
+      
+      // Gérer spécifiquement l'erreur de doublons
+      if (e.status === 409 && e.doublons) {
+        $('#form').classList.add('hidden');
+        $('#avertissement-doublons').classList.remove('hidden');
+        
+        // Afficher la liste des doublons avec liens
+        const listeHtml = e.doublons.map(d => {
+          const raisons = d.raisons ? d.raisons.join(', ') : 'similaire';
+          return '<div class="doublon-item">' +
+            '<strong><a href="index.html" target="_blank">' + d.reference + '</a></strong> ' +
+            '<span class="doublon-raisons">(' + raisons + ')</span>' +
+            '</div>';
+        }).join('');
+        $('#liste-doublons').innerHTML = listeHtml;
+        $('#avertissement-doublons').scrollIntoView();
+        return;
+      }
+      
       if (e.details) {
         Object.entries(e.details).forEach(([k, v]) => { if (typeof v === 'string') showErr(k, v); });
         const g = $('#erreur-globale'); g.textContent = e.message; g.classList.remove('hidden');
@@ -127,6 +147,45 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
+
+  // Forcer l'envoi malgré les doublons
+  $('#confirmer-pas-doublon').addEventListener('click', async () => {
+    const body = {
+      type_incident: $('#type_incident').value,
+      description: $('#description').value.trim(),
+      lieu_declare: $('#lieu_declare').value.trim(),
+      lat: coords ? coords.lat : null, lng: coords ? coords.lng : null,
+      date_observation: $('#date_observation').value ? new Date($('#date_observation').value).toISOString() : '',
+      contact: $('#contact').value.trim(),
+      consentement: $('#consentement').checked,
+      photo: photoData,
+      site_web: $('#site_web').value,
+      confirmer_pas_doublon: true, // Force l'envoi
+    };
+    
+    const btn = $('#confirmer-pas-doublon'); btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    try {
+      const r = await api('/api/signalements', { method: 'POST', body });
+      $('#avertissement-doublons').classList.add('hidden');
+      $('#ref').textContent = r.reference;
+      $('#note-carte').textContent = r.sur_la_carte
+        ? 'Notez cette référence pour suivre votre signalement. Il apparaîtra sur la carte avec la mention « à vérifier ».'
+        : 'Notez cette référence pour suivre votre signalement. Sans position précise, il n\'apparaîtra pas sur la carte tant qu\'un vérificateur ne l\'aura pas localisé.';
+      $('#succes').classList.remove('hidden');
+      $('#succes').scrollIntoView();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Confirmer et envoyer malgré tout';
+      const g = $('#erreur-globale'); g.textContent = e.message; g.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+
+  // Modifier le signalement (retour au formulaire)
+  $('#modifier-signalement').addEventListener('click', () => {
+    $('#avertissement-doublons').classList.add('hidden');
+    $('#form').classList.remove('hidden');
+    $('#form').scrollIntoView();
+  });
 
   init();
 })();
